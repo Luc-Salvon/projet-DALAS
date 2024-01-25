@@ -28,3 +28,14 @@ for i in range(60000, 60011):
 
     print(page.find("title"))
     print(get_rating(page))
+
+
+
+def get_platform(page):
+    classes = page.find_all("div","GameSummary_profile_info__HZFQu GameSummary_medium___r_ia")
+
+    for classe in classes:
+        if "Platform" in classe.find("strong").text:
+            platform = classe.text
+            platform = platform.split(":")[1][1:]
+            return platform
