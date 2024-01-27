@@ -42,6 +42,17 @@ def get_genre(page):
             return genre
     return ["NG"] # pas de genre renseigne
 
+def get_date(page):
+    classes = page.find_all("div","GameSummary_profile_info__HZFQu")
+    for classe in classes:
+        description = classe.find("strong")
+        if description != None:
+            if "NA" in description.text:
+                date = classe.text
+                date = date.split(":")[1][1:]
+                return int(date[-4:])
+    return "ND" # pas de date renseignee
+
 def get_time(page):
     table = page.find("table","GameTimeTable_game_main_table__7uN3H")
     if table != None:
@@ -73,6 +84,7 @@ for i in range(40000, 40011):
     print(get_platform(page))
     print(get_time(page))
     print(get_genre(page))
+    print(get_date(page))
     print("")
 
 
