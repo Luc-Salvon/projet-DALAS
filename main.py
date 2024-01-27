@@ -32,8 +32,36 @@ def get_platform(page):
             return platform
     return ["NP"] # pas de plateforme renseignee
 
+def get_genre(page):
+    classes = page.find_all("div","GameSummary_profile_info__HZFQu GameSummary_medium___r_ia")
+    for classe in classes:
+        if "Genre" in classe.find("strong").text:
+            genre = classe.text
+            genre = genre.split(":")[1][1:]
+            genre = genre.split(', ')
+            return genre
+    return ["NG"] # pas de genre renseigne
+
+def get_time(page):
+    table = page.find("table","GameTimeTable_game_main_table__7uN3H")
+    if table != None:
+        colonne_main_story = table.find("tr","spreadsheet")
+        time_main_story = colonne_main_story.find_all("td")[2]
+        time_main_story = time_main_story.text
+        time_main_story = time_main_story.split(" ")
+        if len(time_main_story)>1:
+            heures = float(time_main_story[0][:-1])
+            minutes = float(time_main_story[1][:-1])
+            time = heures + minutes*1/60
+        else:
+            time = time_main_story[0][:-1]
+
+        return float(time)
+    else:
+        return "NT" # temps non renseigné
+
 # 108288
-for i in range(60000, 60011):
+for i in range(40000, 40011):
     try:
         request_text = request.urlopen(base_url + str(i)).read()
         page = bs4.BeautifulSoup(request_text, "lxml")
@@ -43,6 +71,8 @@ for i in range(60000, 60011):
     print(get_title(page))
     print(get_rating(page))
     print(get_platform(page))
+    print(get_time(page))
+    print(get_genre(page))
     print("")
 
 
