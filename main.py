@@ -1,6 +1,6 @@
 import bs4
 import lxml
-import pandas
+import pandas as pd
 import urllib
 import re
 
@@ -71,6 +71,9 @@ def get_time(page):
     else:
         return "NT" # temps non renseigné
 
+
+df = pd.DataFrame(columns=["title","rating","platform","avg_time","genre","date"])
+
 # 108288
 for i in range(40000, 40011):
     try:
@@ -78,7 +81,10 @@ for i in range(40000, 40011):
         page = bs4.BeautifulSoup(request_text, "lxml")
     except urllib.error.HTTPError:
         continue
-
+    df = df.append({"title":get_title(page),"rating":get_rating(page),
+                    "platform":get_platform(page),"avg_time":get_time(page),
+                    "genre":get_genre(page),"date":get_date(page)},ignore_index=True)
+    """
     print(get_title(page))
     print(get_rating(page))
     print(get_platform(page))
@@ -86,7 +92,9 @@ for i in range(40000, 40011):
     print(get_genre(page))
     print(get_date(page))
     print("")
+    """
 
+print(df)
 
 
 
