@@ -91,7 +91,7 @@ def get_page(url):
 
 
 def get_price(steam_page):
-    div = page.find("div", attrs={"class":"game_purchase_price.price", "data-price-final":re.compile('[0-9]+')})
+    div = page.find("div", attrs={"class":"game_purchase_price", "data-price-final":re.compile('[0-9]+')})
 
     if div is None:
         return pd.NA
