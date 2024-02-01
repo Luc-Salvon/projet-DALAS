@@ -72,7 +72,34 @@ def get_time(page):
         return "NT" # temps non renseigné
 
 
-df = pd.DataFrame(columns=["title","rating","platform","avg_time","genre","date"])
+def get_url_steam(page):
+    a = page.find("a", "GameSummary_steam_text__Fe9Uv")
+    if a is None:
+        return
+
+    return a["href"]
+
+
+def get_page(url):
+    try:
+        request_text = request.urlopen(url).read()
+        page = bs4.BeautifulSoup(request_text, "lxml")
+    except urllib.error.HTTPError:
+        return
+
+    return page
+
+
+def get_price(steam_page):
+    div = page.find("div", attrs={"class":"game_purchase_price.price", "data-price-final":re.compile('[0-9]+')})
+
+    if div is None:
+        return pd.NA
+
+    return div.text
+
+
+#df = pd.DataFrame(columns=["title","rating","platform","avg_time","genre","date"])
 
 # 108288
 for i in range(40000, 40011):
@@ -81,9 +108,19 @@ for i in range(40000, 40011):
         page = bs4.BeautifulSoup(request_text, "lxml")
     except urllib.error.HTTPError:
         continue
-    df = df.append({"title":get_title(page),"rating":get_rating(page),
-                    "platform":get_platform(page),"avg_time":get_time(page),
-                    "genre":get_genre(page),"date":get_date(page)},ignore_index=True)
+    # df = df.append({"title":get_title(page),"rating":get_rating(page),
+    #                 "platform":get_platform(page),"avg_time":get_time(page),
+    #                 "genre":get_genre(page),"date":get_date(page)},ignore_index=True)
+
+    url_steam = get_url_steam(page)
+
+    if url_steam:
+        steam_page = get_page(url_steam)
+        if steam_page is None:
+            continue
+
+        print(get_price(steam_page))
+
     """
     print(get_title(page))
     print(get_rating(page))
@@ -94,7 +131,8 @@ for i in range(40000, 40011):
     print("")
     """
 
-print(df)
+#print(df)
+
 
 
 
