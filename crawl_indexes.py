@@ -7,8 +7,8 @@ from main import get_url_steam
 
 base_url = "https://howlongtobeat.com/game/"
 
-with open("how-long-to-bead-ids.txt", "a") as f:
-    for i in range(1501, 2501):
+with open("how-long-to-beat-ids.txt", "a") as f:
+    for i in range(4563, 100000):
         if i % 10 == 0:
             print(i)
 
