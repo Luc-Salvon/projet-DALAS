@@ -3,9 +3,16 @@ from urllib import request
 
 import bs4
 
-from main import get_url_steam
-
 base_url = "https://howlongtobeat.com/game/"
+
+
+def get_url_steam(page):
+    a = page.find("a", "GameSummary_steam_text__Fe9Uv")
+    if a is None:
+        return
+
+    return a["href"]
+
 
 with open("how-long-to-beat-ids.txt", "a") as f:
     for i in range(4563, 100000):
