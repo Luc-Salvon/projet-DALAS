@@ -1,138 +1,68 @@
-import bs4
-import lxml
-import pandas as pd
-import urllib
-import re
+import csv
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
 
-from urllib import request
+from scrapping import *
 
-base_url = "https://howlongtobeat.com/game/"
+hltb_base_url = "https://howlongtobeat.com/game/"
 
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Firefox(options=options)
 
-def get_title(page):
-    title = page.find("title").text
-    title = title[12:].split('?')[0]
-    return title
+start_id = 1
+end_id = 100
 
-def get_rating(page):
-    rating_tag = page.find("a", attrs={"class": "text_primary", "href": re.compile("/game/[0-9]+/reviews")})
-    if rating_tag is None:
-        return "NR"
+with open("game_data.csv", "w") as write_file:
+    writer = csv.writer(write_file)
 
-    rating = rating_tag.text.split("%")[0]
-    return rating
+    if start_id == 1:
+        writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "best_rating", "worst_rating", "description", "langues_audio", "langues_sous_titres"])
 
-def get_platform(page):
-    classes = page.find_all("div","GameSummary_profile_info__HZFQu GameSummary_medium___r_ia")
-    for classe in classes:
-        if "Platform" in classe.find("strong").text:
-            platform = classe.text
-            platform = platform.split(":")[1][1:]
-            platform = platform.split(', ')
-            return platform
-    return ["NP"] # pas de plateforme renseignee
+    with open("how-long-to-beat-ids.txt", "r") as hltb_ids:
+        for line in hltb_ids:
+            hltb_id = int(line.strip())
 
-def get_genre(page):
-    classes = page.find_all("div","GameSummary_profile_info__HZFQu GameSummary_medium___r_ia")
-    for classe in classes:
-        if "Genre" in classe.find("strong").text:
-            genre = classe.text
-            genre = genre.split(":")[1][1:]
-            genre = genre.split(', ')
-            return genre
-    return ["NG"] # pas de genre renseigne
+            if hltb_id < start_id:
+                continue
 
-def get_date(page):
-    classes = page.find_all("div","GameSummary_profile_info__HZFQu")
-    for classe in classes:
-        description = classe.find("strong")
-        if description != None:
-            if "NA" in description.text:
-                date = classe.text
-                date = date.split(":")[1][1:]
-                return int(date[-4:])
-    return "ND" # pas de date renseignee
+            if hltb_id > end_id:
+                break
 
-def get_time(page):
-    table = page.find("table","GameTimeTable_game_main_table__7uN3H")
-    if table != None:
-        colonne_main_story = table.find("tr","spreadsheet")
-        time_main_story = colonne_main_story.find_all("td")[2]
-        time_main_story = time_main_story.text
-        time_main_story = time_main_story.split(" ")
-        if len(time_main_story)>1:
-            heures = float(time_main_story[0][:-1])
-            minutes = float(time_main_story[1][:-1])
-            time = heures + minutes*1/60
-        else:
-            time = time_main_story[0][:-1]
+            # How long to beat
 
-        return float(time)
-    else:
-        return "NT" # temps non renseigné
+            print(f"Processing {hltb_id}")
 
+            hltb_page = bs4.BeautifulSoup(request.urlopen(hltb_base_url + str(hltb_id)).read(), "lxml")
 
-def get_url_steam(page):
-    a = page.find("a", "GameSummary_steam_text__Fe9Uv")
-    if a is None:
-        return
+            title = get_title(hltb_page)
+            rating = get_rating(hltb_page)
+            retirement = get_retirement(hltb_page)
+            platform = get_platform(hltb_page)
+            genre = get_genre(hltb_page)
+            date = get_date(hltb_page)
+            time = get_time(hltb_page)
 
-    return a["href"]
+            # Steam
 
+            steam_url = get_url_steam(hltb_page)
 
-def get_page(url):
-    try:
-        request_text = request.urlopen(url).read()
-        page = bs4.BeautifulSoup(request_text, "lxml")
-    except urllib.error.HTTPError:
-        return
+            if steam_url is None:
+                print(f"Steam URL not found for {hltb_id}")
+                continue
 
-    return page
+            steam_page = get_page(steam_url, driver)
 
+            price = get_price(steam_page)
+            memoire_vive = get_memoire_vive(steam_page)
+            espace_disque = get_espace_disque(steam_page)
+            pourcentage_pos = get_pourcentage_pos(steam_page)
+            review_count, rating_value, best_rating, worst_rating = get_steam_rating_stats(steam_page)
+            description = get_steam_description(steam_page)
+            langues_audio, langues_sous_titres = get_language(steam_page)
 
-def get_price(steam_page):
-    div = page.find("div", attrs={"class":"game_purchase_price", "data-price-final":re.compile('[0-9]+')})
+            # Write to file
 
-    if div is None:
-        return pd.NA
-
-    return div.text
-
-
-#df = pd.DataFrame(columns=["title","rating","platform","avg_time","genre","date"])
-
-# 108288
-for i in range(40000, 40011):
-    try:
-        request_text = request.urlopen(base_url + str(i)).read()
-        page = bs4.BeautifulSoup(request_text, "lxml")
-    except urllib.error.HTTPError:
-        continue
-    # df = df.append({"title":get_title(page),"rating":get_rating(page),
-    #                 "platform":get_platform(page),"avg_time":get_time(page),
-    #                 "genre":get_genre(page),"date":get_date(page)},ignore_index=True)
-
-    url_steam = get_url_steam(page)
-
-    if url_steam:
-        steam_page = get_page(url_steam)
-        if steam_page is None:
-            continue
-
-        print(get_price(steam_page))
-
-    """
-    print(get_title(page))
-    print(get_rating(page))
-    print(get_platform(page))
-    print(get_time(page))
-    print(get_genre(page))
-    print(get_date(page))
-    print("")
-    """
-
-#print(df)
-
-
+            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, best_rating, worst_rating, description, langues_audio, langues_sous_titres])
 
 
