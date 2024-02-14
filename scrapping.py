@@ -263,11 +263,14 @@ def get_language(page_steam):
     return pd.NA, pd.NA
 
 
-def get_players_stats(page):  # à tester
-    numero_de_jeu = get_url_steam(page).split("/")[-1]
+def get_players_stats(page,driver):
+    numero_de_jeu = get_url_steam(page).split("/")[-2]
     url_charts = "https://steamcharts.com/app/" + numero_de_jeu
-    page_charts = get_page(url_charts)
+    page_charts = get_page(url_charts,driver)
     divs = page_charts.find_all("div", "app-stat")
-    twenty_four_hours = divs[1].find("span").text.remove(',')
-    all_time = divs[2].find("span").text.remove(',')
-    return twenty_four_hours, all_time
+    if divs:
+        twenty_four_hours = divs[1].find("span").text.replace(',','')
+        all_time = divs[2].find("span").text.replace(',','')
+        return int(twenty_four_hours), int(all_time)
+    return pd.NA
+

@@ -17,7 +17,7 @@ with open("game_data.csv", "w") as write_file:
     writer = csv.writer(write_file)
 
     if start_id == 1:
-        writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "best_rating", "worst_rating", "description", "langues_audio", "langues_sous_titres"])
+        writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "best_rating", "worst_rating", "description", "langues_audio", "langues_sous_titres", "twenty_four_hours", "all_time"])
 
     with open("how-long-to-beat-ids.txt", "r") as hltb_ids:
         for line in hltb_ids:
@@ -60,9 +60,10 @@ with open("game_data.csv", "w") as write_file:
             review_count, rating_value, best_rating, worst_rating = get_steam_rating_stats(steam_page)
             description = get_steam_description(steam_page)
             langues_audio, langues_sous_titres = get_language(steam_page)
+            twenty_four_hours, all_time = get_players_stats(hltb_page,driver)
 
             # Write to file
 
-            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, best_rating, worst_rating, description, langues_audio, langues_sous_titres])
+            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, best_rating, worst_rating, description, langues_audio, langues_sous_titres, twenty_four_hours, all_time])
 
 
