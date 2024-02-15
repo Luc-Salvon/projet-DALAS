@@ -59,7 +59,7 @@ with open("game_data.csv", "a") as write_file:
             pourcentage_pos = get_pourcentage_pos(steam_page)
             review_count, rating_value, best_rating, worst_rating = get_steam_rating_stats(steam_page)
             description = get_steam_description(steam_page)
-            langues_audio, langues_sous_titres = get_language(steam_page)
+            langues_audio, langues_sous_titres = get_language(steam_page) #probleme
             twenty_four_hours, all_time = get_players_stats(hltb_page, driver)
 
             # Write to file
