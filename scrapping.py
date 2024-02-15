@@ -126,12 +126,12 @@ def get_url_steam(page):
 
 
 def get_price(page_steam):
-    strong = page_steam.find("strong", "GameSummary_price__BRmd2")
+    div = page_steam.find("div", "game_purchase_price")
 
-    if strong is None:
+    if div is None:
         return pd.NA
 
-    return strong.text
+    return div.text.strip()
 
 
 def get_memoire_vive(page_steam):
@@ -145,8 +145,8 @@ def get_memoire_vive(page_steam):
             if li.find("strong") is not None:
                 if "Memory:" == li.find("strong").text:
                     memoire_vive = li.text.split(":")[1]
-                    memoire_vive_nb = float(memoire_vive.split(" ")[1])
-                    unite = memoire_vive.split(" ")[2]
+                    memoire_vive_nb = float(memoire_vive.split(" ")[0])
+                    unite = memoire_vive.split(" ")[1]
                     if unite == "MB":
                         memoire_vive_nb *= 0.001
                     return memoire_vive_nb
@@ -179,8 +179,8 @@ def get_espace_disque(page_steam):
             if li.find("strong") is not None:
                 if "Storage:" == li.find("strong").text:
                     espace_disque = li.text.split(":")[1]
-                    espace_disque_nb = float(espace_disque.split(" ")[1])
-                    unite = espace_disque.split(" ")[2]
+                    espace_disque_nb = float(espace_disque.split(" ")[0])
+                    unite = espace_disque.split(" ")[1]
                     if unite == "MB":
                         espace_disque_nb *= 0.001
                     return espace_disque_nb

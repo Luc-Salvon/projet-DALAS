@@ -10,10 +10,10 @@ options = Options()
 options.add_argument('--headless')
 driver = webdriver.Firefox(options=options)
 
-start_id = 1
-end_id = 100
+start_id = 100
+end_id = 1000
 
-with open("game_data.csv", "w") as write_file:
+with open("game_data.csv", "a") as write_file:
     writer = csv.writer(write_file)
 
     if start_id == 1:
