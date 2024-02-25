@@ -1,3 +1,5 @@
+# Permet de crawler les pages de how long to beat pour récupérer les indices des jeux qui ont une page steam associée
+
 import urllib
 from urllib import request
 
@@ -14,8 +16,8 @@ def get_url_steam(page):
     return a["href"]
 
 
-with open("how-long-to-beat-ids.txt", "a") as f:
-    for i in range(100000, 110001):
+with open("../Donnees/how-long-to-beat-ids.txt", "a") as f:
+    for i in range(89240, 90000):  # Indices sur lesquels crawler
         if i % 10 == 0:
             print(i)
 
