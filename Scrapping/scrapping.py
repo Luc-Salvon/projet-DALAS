@@ -212,8 +212,12 @@ def get_espace_disque(page_steam):
                             espace_disque_nb = float(espace_disque.split(" ")[1][:-2])
                             unite = espace_disque.split(" ")[1][-2:]
                     else:
-                        espace_disque_nb = float(espace_disque.split(" ")[0])
-                        unite = espace_disque.split(" ")[1]
+                        try:
+                            espace_disque_nb = float(espace_disque.split(" ")[0])
+                            unite = espace_disque.split(" ")[1]
+                        except ValueError:
+                            espace_disque_nb = float(espace_disque.split(" ")[0][:-2])
+                            unite = espace_disque.split(" ")[1][-2:]
                     if unite == "MB":
                         espace_disque_nb *= 0.001
                     return espace_disque_nb
@@ -228,8 +232,12 @@ def get_espace_disque(page_steam):
                         if "Storage" == li.text[:7] or "Hard Drive"==li.text[:10]:
                             espace_disque = li.text.split(":")[1]
                             if espace_disque[0]==" ":
-                                espace_disque_nb = float(espace_disque.split(" ")[1])
-                                unite = espace_disque.split(" ")[2]
+                                try:
+                                    espace_disque_nb = float(espace_disque.split(" ")[1])
+                                    unite = espace_disque.split(" ")[2]
+                                except ValueError:
+                                    espace_disque_nb = float(espace_disque.split(" ")[1][:-2])
+                                    unite = espace_disque.split(" ")[1][-2:]
                             else:
                                 espace_disque_nb = float(espace_disque.split(" ")[0])
                                 unite = espace_disque.split(" ")[1]
