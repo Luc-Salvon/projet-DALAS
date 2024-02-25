@@ -17,7 +17,7 @@ def get_page(url, driver=None):
         # On utilise Selenium si le driver est renseigné
         if driver is not None:
             driver.get(url)
-            time.sleep(1)
+            time.sleep(.5)
             return bs4.BeautifulSoup(driver.page_source, 'html.parser')
 
         # Sinon, on utilise urllib
@@ -100,14 +100,18 @@ def get_time(page):
         time_main_story = colonne_main_story.find_all("td")[2]
         time_main_story = time_main_story.text
         time_main_story = time_main_story.split(" ")
-        if len(time_main_story) > 1:
+        if len(time_main_story) > 1 and time_main_story[1][0].isdigit():
             heures = float(time_main_story[0][:-1])
             minutes = float(time_main_story[1][:-1])
             time = heures + minutes * 1 / 60
+        elif len(time_main_story) > 1:
+            time = time_main_story[0]
         else:
             time = time_main_story[0][:-1]
-
-        return float(time)
+        try:
+            return float(time)
+        except ValueError:
+            return pd.NA
     else:
         return pd.NA  # temps non renseigné
 
@@ -164,26 +168,27 @@ def get_memoire_vive(page_steam):
         div = page_steam.find("div", "game_area_sys_req_leftCol")
         if div is not None:
             ul = div.find("ul", "bb_ul")
-            lis = ul.find_all("li")
-            for li in lis:
-                if li.text is not None:
-                    if "Memory:" == li.text[:7]:
-                        memoire_vive = li.text.split(":")[1]
-                        if memoire_vive[0]==" ":
-                            try:
-                                memoire_vive_nb = float(memoire_vive.split(" ")[1])
-                                unite = memoire_vive.split(" ")[2]
-                            except ValueError:
-                                return pd.NA
-                        else:
-                            try:
-                                memoire_vive_nb = float(memoire_vive.split(" ")[0])
-                                unite = memoire_vive.split(" ")[1]
-                            except ValueError:
-                                return pd.NA
-                        if unite == "MB":
-                            memoire_vive_nb *= 0.001
-                        return memoire_vive_nb
+            if ul is not None:
+                lis = ul.find_all("li")
+                for li in lis:
+                    if li.text is not None:
+                        if "Memory:" == li.text[:7]:
+                            memoire_vive = li.text.split(":")[1]
+                            if memoire_vive[0]==" ":
+                                try:
+                                    memoire_vive_nb = float(memoire_vive.split(" ")[1])
+                                    unite = memoire_vive.split(" ")[2]
+                                except ValueError:
+                                    return pd.NA
+                            else:
+                                try:
+                                    memoire_vive_nb = float(memoire_vive.split(" ")[0])
+                                    unite = memoire_vive.split(" ")[1]
+                                except ValueError:
+                                    return pd.NA
+                            if unite == "MB":
+                                memoire_vive_nb *= 0.001
+                            return memoire_vive_nb
 
     return pd.NA
 
@@ -200,8 +205,12 @@ def get_espace_disque(page_steam):
                 if "Storage:" == li.text[:8] or "Hard Drive"==li.text[:10]:
                     espace_disque = li.text.split(":")[1]
                     if espace_disque[0]==" ":
-                        espace_disque_nb = float(espace_disque.split(" ")[1])
-                        unite = espace_disque.split(" ")[2]
+                        try:
+                            espace_disque_nb = float(espace_disque.split(" ")[1])
+                            unite = espace_disque.split(" ")[2]
+                        except ValueError:
+                            espace_disque_nb = float(espace_disque.split(" ")[1][:-2])
+                            unite = espace_disque.split(" ")[1][-2:]
                     else:
                         espace_disque_nb = float(espace_disque.split(" ")[0])
                         unite = espace_disque.split(" ")[1]
@@ -212,20 +221,21 @@ def get_espace_disque(page_steam):
         div = page_steam.find("div", "game_area_sys_req_leftCol")
         if div is not None:
             ul = div.find("ul", "bb_ul")
-            lis = ul.find_all("li")
-            for li in lis:
-                if li.text is not None:
-                    if "Storage" == li.text[:7] or "Hard Drive"==li.text[:10]:
-                        espace_disque = li.text.split(":")[1]
-                        if espace_disque[0]==" ":
-                            espace_disque_nb = float(espace_disque.split(" ")[1])
-                            unite = espace_disque.split(" ")[2]
-                        else:
-                            espace_disque_nb = float(espace_disque.split(" ")[0])
-                            unite = espace_disque.split(" ")[1]
-                        if unite == "MB":
-                            espace_disque_nb *= 0.001
-                        return espace_disque_nb
+            if ul is not None:
+                lis = ul.find_all("li")
+                for li in lis:
+                    if li.text is not None:
+                        if "Storage" == li.text[:7] or "Hard Drive"==li.text[:10]:
+                            espace_disque = li.text.split(":")[1]
+                            if espace_disque[0]==" ":
+                                espace_disque_nb = float(espace_disque.split(" ")[1])
+                                unite = espace_disque.split(" ")[2]
+                            else:
+                                espace_disque_nb = float(espace_disque.split(" ")[0])
+                                unite = espace_disque.split(" ")[1]
+                            if unite == "MB":
+                                espace_disque_nb *= 0.001
+                            return espace_disque_nb
 
     return pd.NA
 
