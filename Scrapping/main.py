@@ -4,7 +4,7 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 
-from Scrapping.scrapping import *
+from scrapping import *
 
 hltb_base_url = "https://howlongtobeat.com/game/"
 
@@ -13,8 +13,8 @@ options.add_argument('--headless')
 driver = webdriver.Firefox(options=options)
 
 # A changer pour définir l'intervalle d'indices à scrapper
-start_id = 8517
-end_id = 10000
+start_id = 26718
+end_id = 40000
 
 with open("../Donnees/game_data.csv", "a") as write_file:
     writer = csv.writer(write_file)
