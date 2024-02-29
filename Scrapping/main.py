@@ -13,8 +13,8 @@ options.add_argument('--headless')
 driver = webdriver.Firefox(options=options)
 
 # A changer pour définir l'intervalle d'indices à scrapper
-start_id = 26718
-end_id = 40000
+start_id = 36708
+end_id = 50000
 
 with open("../Donnees/game_data.csv", "a") as write_file:
     writer = csv.writer(write_file)
