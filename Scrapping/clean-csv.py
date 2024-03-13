@@ -30,7 +30,7 @@ def traitement_int(el):
     try:
         return int(el)
     except ValueError:
-        return ""
+        return pd.NA
 
 
 def traitement_description(desc):
@@ -68,5 +68,10 @@ df["description"] = traitement(df["description"], traitement_description)
 df["twenty_four_hours"] = traitement(df["twenty_four_hours"], traitement_int)
 
 df["all_time"] = traitement(df["all_time"], traitement_int)
+
+del df["espace_disque"]
+del df["memoire_vive"]
+
+df = df.dropna(axis="rows")
 
 df.to_csv("../Donnees/cleaned_data.csv")
