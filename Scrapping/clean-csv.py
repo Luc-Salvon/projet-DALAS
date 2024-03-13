@@ -26,17 +26,25 @@ def traitement_prix(prix):
     return
 
 
-def traitement_review_count(rc):
+def traitement_int(el):
     try:
-        return int(rc)
+        return int(el)
     except ValueError:
         return ""
 
 
 def traitement_description(desc):
     try:
-        return desc[4:]
-    except IndexError:
+        if desc.strip().split()[0] in {"jeu", "contenu", "logiciel", "te", "équipement"}:
+            if desc.startswith("te"):
+                space = desc[4:].index(" ")
+            else:
+                space = desc.index(" ")
+            return desc[space+1:].strip()
+        else:
+            print(desc[:10])
+            return desc.strip()
+    except (IndexError, TypeError, AttributeError):
         return ""
 
 
@@ -49,10 +57,16 @@ def traitement(dfcol, f):
     return remplacement
 
 
+df["date"] = traitement(df["date"], traitement_int)
+
 df["price"] = traitement(df["price"], traitement_prix)
 
-df["review_count"] = traitement(df["review_count"], traitement_review_count)
+df["review_count"] = traitement(df["review_count"], traitement_int)
 
 df["description"] = traitement(df["description"], traitement_description)
+
+df["twenty_four_hours"] = traitement(df["twenty_four_hours"], traitement_int)
+
+df["all_time"] = traitement(df["all_time"], traitement_int)
 
 df.to_csv("../Donnees/cleaned_data.csv")
