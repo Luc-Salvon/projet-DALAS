@@ -40,7 +40,7 @@ def traitement_description(desc):
                 space = desc[4:].index(" ")
             else:
                 space = desc.index(" ")
-            return desc[space+1:].strip()
+            return desc[space + 1:].strip()
         else:
             print(desc[:10])
             return desc.strip()
@@ -56,6 +56,8 @@ def traitement(dfcol, f):
 
     return remplacement
 
+
+df["rating"] = traitement(df["rating"], traitement_int)
 
 df["date"] = traitement(df["date"], traitement_int)
 
