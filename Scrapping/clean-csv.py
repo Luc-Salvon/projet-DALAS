@@ -1,6 +1,6 @@
 import pandas as pd
 
-df = pd.read_csv("../Donnees/game_data.csv")
+df = pd.read_csv("./Donnees/game_data.csv")
 df = df.set_index("hltb_id")
 
 
@@ -47,6 +47,16 @@ def traitement_description(desc):
     except (IndexError, TypeError, AttributeError):
         return ""
 
+def pourcentage_pos(pour):
+    try:
+        if type(pour) == str:
+            if len(pour)>5:
+                return
+        if type(pour)!=int:
+            return int(pour)
+    except ValueError:
+        return
+
 
 def traitement(dfcol, f):
     remplacement = [0] * len(dfcol)
@@ -71,9 +81,11 @@ df["twenty_four_hours"] = traitement(df["twenty_four_hours"], traitement_int)
 
 df["all_time"] = traitement(df["all_time"], traitement_int)
 
+df["pourcentage_pos"] = traitement(df["pourcentage_pos"], pourcentage_pos) 
+
 del df["espace_disque"]
 del df["memoire_vive"]
 
 df = df.dropna(axis="rows")
 
-df.to_csv("../Donnees/cleaned_data.csv")
+df.to_csv("./Donnees/cleaned_data.csv")
