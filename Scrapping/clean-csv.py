@@ -86,4 +86,8 @@ del df["memoire_vive"]
 
 df = df.dropna(axis="rows")
 
+df = df.drop_duplicates()
+
+df = df.drop(2721, axis=0)
+
 df.to_csv("../Donnees/cleaned_data.csv")
