@@ -150,7 +150,7 @@ def get_memoire_vive(page_steam):
                 if li.find("strong") is not None:
                     if "Memory:" == li.text[:7]:
                         memoire_vive = li.text.split(":")[1]
-                        if memoire_vive[0]==" ":
+                        if memoire_vive[0] == " ":
                             try:
                                 memoire_vive_nb = float(memoire_vive.split(" ")[1])
                                 unite = memoire_vive.split(" ")[2]
@@ -175,7 +175,7 @@ def get_memoire_vive(page_steam):
                         if li.text is not None:
                             if "Memory:" == li.text[:7]:
                                 memoire_vive = li.text.split(":")[1]
-                                if memoire_vive[0]==" ":
+                                if memoire_vive[0] == " ":
                                     try:
                                         memoire_vive_nb = float(memoire_vive.split(" ")[1])
                                         unite = memoire_vive.split(" ")[2]
@@ -206,9 +206,9 @@ def get_espace_disque(page_steam):
             lis = ul.find_all("li")
             for li in lis:
                 if li.text is not None:
-                    if "Storage:" == li.text[:8] or "Hard Drive"==li.text[:10]:
+                    if "Storage:" == li.text[:8] or "Hard Drive" == li.text[:10]:
                         espace_disque = li.text.split(":")[1]
-                        if espace_disque[0]==" ":
+                        if espace_disque[0] == " ":
                             try:
                                 espace_disque_nb = float(espace_disque.split(" ")[1])
                                 unite = espace_disque.split(" ")[2]
@@ -233,9 +233,9 @@ def get_espace_disque(page_steam):
                     lis = ul.find_all("li")
                     for li in lis:
                         if li.text is not None:
-                            if "Storage" == li.text[:7] or "Hard Drive"==li.text[:10]:
+                            if "Storage" == li.text[:7] or "Hard Drive" == li.text[:10]:
                                 espace_disque = li.text.split(":")[1]
-                                if espace_disque[0]==" ":
+                                if espace_disque[0] == " ":
                                     try:
                                         espace_disque_nb = float(espace_disque.split(" ")[1])
                                         unite = espace_disque.split(" ")[2]
@@ -284,7 +284,7 @@ def get_steam_rating_stats(page_steam):
 def get_steam_description(page_steam):
     div = page_steam.find("div", id="game_area_description")
     if div is not None:
-        descr = div.text[16:].replace("\n"," ").replace("\t","")
+        descr = div.text[16:].replace("\n", " ").replace("\t", "")
         return descr
 
     return pd.NA
@@ -310,6 +310,36 @@ def get_language(page_steam):
             return langues_audio, langues_sous_titres
 
     return pd.NA, pd.NA
+
+
+def get_recommanded_games(page_steam):
+    block = page_steam.find("div", "recommended_block_content")
+    if block is not None:
+        games = block.find_all("a", "small_cap")
+        return [int(game["data-ds-appid"]) for game in games]
+
+    return pd.NA
+
+
+def get_user_tags(page_steam):
+    div = page_steam.find("div", "popular_tags")
+    if div is not None:
+        tags = div.find_all("a")
+        tags = [tag.text.strip() for tag in tags[:max(5, len(tags))]]
+        return tags
+
+    return pd.NA
+
+
+def get_genres_steam(page_steam):
+    div = page_steam.find("div", "details_block")
+    if div is not None:
+        span = div.find("span")
+        if span is not None:
+            genres = span.text.split(", ")
+            return genres
+
+    return pd.NA
 
 
 def get_players_stats(page, driver):
