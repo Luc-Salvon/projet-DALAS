@@ -1,6 +1,7 @@
 import pandas as pd
+import ast
 
-df = pd.read_csv("../Donnees/game_data.csv")
+df = pd.read_csv("./Donnees/game_data.csv")
 df = df.set_index("hltb_id")
 
 
@@ -54,7 +55,7 @@ def pourcentage_pos(pour):
         return int(pour)
     except ValueError:
         return
-
+    
 
 def traitement(dfcol, f):
     remplacement = [0] * len(dfcol)
@@ -63,6 +64,8 @@ def traitement(dfcol, f):
         remplacement[i] = f(el)
 
     return remplacement
+
+
 
 
 df["rating"] = traitement(df["rating"], traitement_int)
@@ -81,13 +84,17 @@ df["all_time"] = traitement(df["all_time"], traitement_int)
 
 df["pourcentage_pos"] = traitement(df["pourcentage_pos"], traitement_int)
 
+
 del df["espace_disque"]
 del df["memoire_vive"]
 
 df = df.dropna(axis="rows")
 
+df["platform"] = df["platform"].apply(ast.literal_eval)
+df["genre"] = df["genre"].apply(ast.literal_eval)
+
 df = df.drop_duplicates()
 
 df = df.drop(2721, axis=0)
 
-df.to_csv("../Donnees/cleaned_data.csv")
+df.to_csv("./Donnees/cleaned_data.csv")
