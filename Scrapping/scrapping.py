@@ -13,11 +13,10 @@ import re
 
 
 def get_page(url, driver=None):
-    try:
+    #try:
         # On utilise Selenium si le driver est renseigné
         if driver is not None:
             driver.get(url)
-            time.sleep(.5)
             return bs4.BeautifulSoup(driver.page_source, 'html.parser')
 
         # Sinon, on utilise urllib
@@ -25,8 +24,8 @@ def get_page(url, driver=None):
         page = bs4.BeautifulSoup(request_text, "lxml")
         return page
 
-    except urllib.error.HTTPError:
-        return
+    # except urllib.error.HTTPError:
+    #     return
 
 
 # •======================•
@@ -352,3 +351,17 @@ def get_players_stats(page, driver):
         all_time = divs[2].find("span").text.replace(',', '')
         return int(twenty_four_hours), int(all_time)
     return pd.NA, pd.NA
+
+
+def get_players_by_time(steamcharts_page):
+    table = steamcharts_page.find("table")
+    lines = []
+    if table is not None:
+        for tr in table.find_all("tr")[1:]:
+            month = tr.find_all("td")[0].text.strip()
+            avg_players = tr.find_all("td")[1].text.replace(",", "").strip()
+            peak_players = tr.find_all("td")[4].text.replace(",", "").strip()
+
+            lines.append([month, avg_players, peak_players])
+        return lines
+    return pd.NA
