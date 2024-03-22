@@ -64,6 +64,10 @@ with open("../Donnees/game_data.csv", "a") as write_file:
             description = get_steam_description(steam_page)
             #langues_audio, langues_sous_titres = get_language(steam_page) #probleme
 
+            steam_id = steam_url.split("/")[-2]
+            steam_tags = get_user_tags(steam_page)
+            steam_genres = get_genres_steam(steam_page)
+
             steamcharts_page = get_page(f"https://steamcharts.com/app/{steam_id}", driver=driver)
 
             if steamcharts_page is None:
@@ -73,10 +77,6 @@ with open("../Donnees/game_data.csv", "a") as write_file:
             twenty_four_hours, all_time = get_players_stats(steamcharts_page)
             players_by_time = get_players_by_time(steamcharts_page)
 
-            steam_id = steam_url.split("/")[-2]
-            steam_tags = get_user_tags(steam_page)
-            steam_genres = get_genres_steam(steam_page)
-
             # Write to file
 
-            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, description, twenty_four_hours, all_time, steam_id, steam_tags, steam_genres])
+            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, description, twenty_four_hours, all_time, steam_id, steam_tags, steam_genres, players_by_time])
