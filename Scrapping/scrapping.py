@@ -341,10 +341,7 @@ def get_genres_steam(page_steam):
     return pd.NA
 
 
-def get_players_stats(page, driver):
-    numero_de_jeu = get_url_steam(page).split("/")[-2]
-    url_charts = "https://steamcharts.com/app/" + numero_de_jeu
-    page_charts = get_page(url_charts, driver)
+def get_players_stats(page_charts):
     divs = page_charts.find_all("div", "app-stat")
     if divs:
         twenty_four_hours = divs[1].find("span").text.replace(',', '')

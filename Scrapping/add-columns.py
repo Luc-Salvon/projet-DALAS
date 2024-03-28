@@ -10,18 +10,19 @@ driver = webdriver.Firefox(options=options)
 
 # Load game_data.csv and get each row
 with open("../Donnees/game_data.csv", "r") as f_read:
-    with open("../Donnees/game_data_bis.csv", "a") as f_write:
+    with open("../Donnees/game_data.csv", "a") as f_write:
         reader = csv.reader(f_read)
         writer = csv.writer(f_write)
 
-        start_id = 0
+        start_id = 12206
         for i, row in enumerate(reader):
-            print(f"Processing line {i}")
             if i == 0:
                 writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "description", "twenty_four_hours", "all_time", "steam_id", "steam_tags", "steam_genres", "players_by_time"])
                 continue
             if i < start_id:
                 continue
+
+            print(f"Processing line {i}")
 
             average_players = row[16]
 

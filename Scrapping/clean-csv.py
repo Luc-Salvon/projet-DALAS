@@ -18,7 +18,7 @@ def traitement_prix(prix):
         return float(prix[1:]) * .92
 
     if prix[-1] == "€":
-        return float(prix[:-1].replace(",", ".").replace("-", "0"))
+        return float(prix[:-1].replace(",", ".").replace("-", "0").replace(" ",""))
 
     if prix in {"Gratuit", "Free-to-play", "Free to Play", "Install Now", "Free To Play", "Gratuit !", "Free Mod"}:
         return 0.
@@ -89,11 +89,10 @@ del df["espace_disque"]
 del df["memoire_vive"]
 
 df = df.dropna(axis="rows")
+df = df.drop_duplicates()
 
 df["platform"] = df["platform"].apply(ast.literal_eval)
 df["genre"] = df["genre"].apply(ast.literal_eval)
-
-df = df.drop_duplicates()
 
 df = df.drop(2721, axis=0)
 

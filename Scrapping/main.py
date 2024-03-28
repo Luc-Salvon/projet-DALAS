@@ -20,7 +20,7 @@ with open("../Donnees/game_data.csv", "a") as write_file:
     writer = csv.writer(write_file)
 
     if start_id == 1:
-        writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "description", "twenty_four_hours", "all_time", "steam_id", "steam_tags", "steam_genres"])
+        writer.writerow(["hltb_id", "title", "rating", "retirement", "platform", "genre", "date", "time", "price", "memoire_vive", "espace_disque", "pourcentage_pos", "review_count", "rating_value", "description", "twenty_four_hours", "all_time", "steam_id", "steam_tags", "steam_genres", "players_by_time"])
 
     with open("../Donnees/how-long-to-beat-ids.txt", "r") as hltb_ids:
         for line in hltb_ids:
@@ -63,12 +63,20 @@ with open("../Donnees/game_data.csv", "a") as write_file:
             review_count, rating_value, best_rating, worst_rating = get_steam_rating_stats(steam_page)
             description = get_steam_description(steam_page)
             #langues_audio, langues_sous_titres = get_language(steam_page) #probleme
-            twenty_four_hours, all_time = get_players_stats(hltb_page, driver)
 
             steam_id = steam_url.split("/")[-2]
             steam_tags = get_user_tags(steam_page)
             steam_genres = get_genres_steam(steam_page)
 
+            steamcharts_page = get_page(f"https://steamcharts.com/app/{steam_id}", driver=driver)
+
+            if steamcharts_page is None:
+                print(f"Steamcharts URL not found for {hltb_id}")
+                continue
+
+            twenty_four_hours, all_time = get_players_stats(steamcharts_page)
+            players_by_time = get_players_by_time(steamcharts_page)
+
             # Write to file
 
-            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, description, twenty_four_hours, all_time, steam_id, steam_tags, steam_genres])
+            writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, description, twenty_four_hours, all_time, steam_id, steam_tags, steam_genres, players_by_time])
