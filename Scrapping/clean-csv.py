@@ -5,8 +5,9 @@ try:
     df = pd.read_csv("../Donnees/game_data.csv")
 except:
     df = pd.read_csv("./Donnees/game_data.csv")
-# df = df.set_index("hltb_id")
+df = df.set_index("hltb_id")
 
+longueur_initiale = len(df["rating"])
 
 # Prix
 def traitement_prix(prix):
@@ -114,6 +115,8 @@ del df["steam_genres"]
 del df["steam_tags"]
 
 # df = df.drop(2721, axis=0)
+
+print(f"Nombre de lignes :\n\tInitialement {longueur_initiale}\n\tAprès traitement {len(df['rating'])}\nTaux de survie : {len(df['rating'])/longueur_initiale}")
 
 try:
     df.to_csv("../Donnees/cleaned_data.csv")
