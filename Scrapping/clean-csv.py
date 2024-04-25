@@ -1,7 +1,10 @@
 import pandas as pd
 import ast
 
-df = pd.read_csv("./Donnees/game_data.csv")
+try:
+    df = pd.read_csv("../Donnees/game_data.csv")
+except:
+    df = pd.read_csv("./Donnees/game_data.csv")
 df = df.set_index("hltb_id")
 
 
@@ -20,7 +23,7 @@ def traitement_prix(prix):
     if prix[-1] == "€":
         return float(prix[:-1].replace(",", ".").replace("-", "0").replace(" ",""))
 
-    if prix in {"Gratuit", "Free-to-play", "Free to Play", "Install Now", "Free To Play", "Gratuit !", "Free Mod"}:
+    if prix in {"Gratuit", "Free-to-play", "Free to Play", "Install Now", "Free To Play", "Gratuit !", "Free Mod", "Free"}:
         return 0.
 
     print(f"PRIX NON TRAITE : {prix}")
@@ -30,11 +33,14 @@ def traitement_prix(prix):
 
 def traitement_description(desc):
     try:
-        if desc.strip().split()[0] in {"jeu", "contenu", "logiciel", "te", "équipement"}:
+        if desc.strip().split()[0] in {"jeu", "contenu", "logiciel", "te", "équipement", "description"}:
             if desc.startswith("te"):
                 space = desc[4:].index(" ")
             else:
-                space = desc.index(" ")
+                try:
+                    space = desc.index(" ")
+                except:
+                    return pd.NA
             return desc[space + 1:].strip()
         else:
             print(desc[:10])
@@ -94,6 +100,9 @@ df = df.drop_duplicates()
 df["platform"] = df["platform"].apply(ast.literal_eval)
 df["genre"] = df["genre"].apply(ast.literal_eval)
 
-df = df.drop(2721, axis=0)
+# df = df.drop(2721, axis=0)
 
-df.to_csv("./Donnees/cleaned_data.csv")
+try:
+    df.to_csv("../Donnees/cleaned_data.csv")
+except:
+    df.to_csv("./Donnees/cleaned_data.csv")
