@@ -5,7 +5,7 @@ try:
     df = pd.read_csv("../Donnees/game_data.csv")
 except:
     df = pd.read_csv("./Donnees/game_data.csv")
-df = df.set_index("hltb_id")
+# df = df.set_index("hltb_id")
 
 
 # Prix
@@ -61,6 +61,10 @@ def pourcentage_pos(pour):
         return int(pour)
     except ValueError:
         return
+
+
+def merge_listes(listes):
+    return sorted(list(set(listes.replace("][", ", ").replace("'", "")[1:-1].split(", "))))
     
 
 def traitement(dfcol, f):
@@ -90,15 +94,24 @@ df["all_time"] = traitement(df["all_time"], traitement_int)
 
 df["pourcentage_pos"] = traitement(df["pourcentage_pos"], traitement_int)
 
-
 del df["espace_disque"]
 del df["memoire_vive"]
 
 df = df.dropna(axis="rows")
 df = df.drop_duplicates()
 
-df["platform"] = df["platform"].apply(ast.literal_eval)
-df["genre"] = df["genre"].apply(ast.literal_eval)
+# df["platform"] = df["platform"].apply(ast.literal_eval)
+# df["genre"] = df["genre"].apply(ast.literal_eval)
+
+
+print("Longueurs", len(df["genre"]), len(df["steam_genres"]), len(df["steam_tags"]))
+
+df["genres"] = df["genre"] + df["steam_genres"] + df["steam_tags"]
+df["genres"] = traitement(df["genres"], merge_listes)
+
+del df["genre"]
+del df["steam_genres"]
+del df["steam_tags"]
 
 # df = df.drop(2721, axis=0)
 
