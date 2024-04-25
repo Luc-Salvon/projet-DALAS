@@ -13,7 +13,7 @@ options.add_argument('--headless')
 driver = webdriver.Firefox(options=options)
 
 # A changer pour définir l'intervalle d'indices à scrapper
-start_id = 48335
+start_id = 60653
 end_id = 80000
 
 with open("../Donnees/game_data.csv", "a") as write_file:
@@ -34,7 +34,7 @@ with open("../Donnees/game_data.csv", "a") as write_file:
 
             # How long to beat
 
-            print(f"Processing {hltb_id}")
+            print(f"Processing {hltb_id}... ")
 
             hltb_page = bs4.BeautifulSoup(request.urlopen(hltb_base_url + str(hltb_id)).read(), "lxml")
 
@@ -80,3 +80,4 @@ with open("../Donnees/game_data.csv", "a") as write_file:
             # Write to file
 
             writer.writerow([hltb_id, title, rating, retirement, platform, genre, date, time, price, memoire_vive, espace_disque, pourcentage_pos, review_count, rating_value, description, twenty_four_hours, all_time, steam_id, steam_tags, steam_genres, players_by_time])
+            print("done")
