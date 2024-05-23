@@ -19,7 +19,7 @@ description_colonnes = {
         "genre":             "Le genre du jeu (Action, Aventure, RPG, etc) d'après la plateforme HowLongToBeat.",
         "date":              "La date de sortie du jeu.",
         "time":              "Le temps de jeu moyen pour terminer le jeu.",
-        "price":             "Le prix du jeu sur Steam.",
+        "price":             "Le prix du jeu sur Steam (en €).",
         "memoire_vive":      "La quantité de mémoire vive recommandée pour jouer au jeu.",
         "espace_disque":     "L'espace disque requis pour installer le jeu.",
         "pourcentage_pos":   "Le pourcentage de critiques positives sur Steam.",
