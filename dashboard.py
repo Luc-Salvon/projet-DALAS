@@ -80,7 +80,6 @@ def recommend_games(liked_games, df, similarity_matrix, top_n=10):
          Input("scatter-plot-y", "value")]
 )
 def update_scatter_plot(x, y):
-    # Get rid of outliers
     dfbis = df[df[x] < df[x].quantile(0.95)]
     dfbis = dfbis[dfbis[y] < dfbis[y].quantile(0.95)]
 
@@ -100,7 +99,9 @@ def update_description(value):
         [Input("histogram", "value")]
 )
 def update_histogram(value):
-    return px.histogram(df, x=value)
+    dfbis = df[df[value] < df[value].quantile(0.95)]
+
+    return px.histogram(dfbis, x=value)
 
 @app.callback(
         Output("game-recommendations", "children"),
@@ -115,11 +116,8 @@ def update_game_recommendations(selected_games):
 
     return [html.Li(game) for game in recommended_games]
 
-
-# Change layout : put description and histogram on the left, scatter plot on the right
-
 app.layout = html.Div([
-        html.H1("Dashboard - How Long to Beat & Steam"),
+        html.H1("Dashboard - Exploration, Analyse et Recommandation de Jeux Vidéos"),
         html.Div([
                 html.Div([
                         html.H2("Description des attributs"),
