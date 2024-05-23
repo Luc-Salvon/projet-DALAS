@@ -101,9 +101,6 @@ del df["memoire_vive"]
 df = df.dropna(axis="rows")
 df = df.drop_duplicates()
 
-# df["platform"] = df["platform"].apply(ast.literal_eval)
-# df["genre"] = df["genre"].apply(ast.literal_eval)
-
 
 print("Longueurs", len(df["genre"]), len(df["steam_genres"]), len(df["steam_tags"]))
 
@@ -114,7 +111,6 @@ del df["genre"]
 del df["steam_genres"]
 del df["steam_tags"]
 
-# df = df.drop(2721, axis=0)
 
 print(f"Nombre de lignes :\n\tInitialement {longueur_initiale}\n\tAprès traitement {len(df['rating'])}\nTaux de survie : {len(df['rating'])/longueur_initiale}")
 
