@@ -4,7 +4,7 @@
 
 ---
 
-### Objectif du projet :
+### Objectif du projet
 
 - Trouver un sujet d'analyse, et mettre en place une pipeline de data science, de la collecte des données à la restitution des résultats
 - Notre sujet s'est porté sur l'analyses de données concernant des jeux vidéos (extraites de [HowLongToBeat](https://store.steampowered.com/](https://howlongtobeat.com/)), [Steam](https://store.steampowered.com/) et [SteamCharts](https://steamcharts.com)), en vue de se donner une vue d'ensemble sur l'état du jeu vidéo et de prédire à quoi pourrait ressembler le prochain jeu populaire.
